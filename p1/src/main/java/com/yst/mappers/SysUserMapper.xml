@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yst.dao.SysUserMapper" >
+  <resultMap id="BaseResultMap" type="com.yst.dto.SysUser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="userName" property="username" jdbcType="VARCHAR" />
+    <result column="pwd" property="pwd" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, userName, pwd, telephone
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from sys_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.yst.dto.SysUser" >
+    insert into sys_user (id, userName, pwd, 
+      telephone)
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, 
+      #{telephone,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yst.dto.SysUser" >
+    insert into sys_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="username != null" >
+        userName,
+      </if>
+      <if test="pwd != null" >
+        pwd,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yst.dto.SysUser" >
+    update sys_user
+    <set >
+      <if test="username != null" >
+        userName = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null" >
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yst.dto.SysUser" >
+    update sys_user
+    set userName = #{username,jdbcType=VARCHAR},
+      pwd = #{pwd,jdbcType=VARCHAR},
+      telephone = #{telephone,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getUserByUserNameAndPwd" resultType = "com.yst.dto.SysUser" parameterType="com.yst.dto.SysUser">
+     select t.id,t.userName as username,t.telephone,t.sex,t.address,t.email from sys_user t where t.userName=#{username} and t.pwd = #{pwd}
+  </select>
+  <select id="getMenuList" parameterType="java.lang.String" resultType="com.yst.dto.SysModule">
+    SELECT DISTINCT
+		a.id,a.name,a.level,a.url,a.parent_id as parentId,a.sequence
+	FROM
+		sys_module a
+	WHERE
+		a.id IN (
+			SELECT
+				b.module_id
+			FROM
+				sys_role_module b
+			WHERE
+				b.role_id IN (
+					SELECT
+						d.roleId
+					FROM
+						sys_user c
+					LEFT JOIN sys_user_role d ON c.id = d.userId
+					WHERE
+						c.username = #{username}
+				)
+		) 
+  </select>
+  <select id="getUserList" resultType = "com.yst.dto.SysUser" parameterType="java.util.Map">
+      select * from sys_user
+      <where>
+      	<if test="username!=null">
+      		userName=#{username}
+      	</if>
+      	<if test="telephone!=null">
+      		and telephone=#{telephone}
+      	</if>
+      	<if test="sex!=null">
+      		and sex=#{sex}
+      	</if>
+      </where>
+      <if test="start>=0 and end>=0">
+      	limit  #{start},#{end}
+      </if>
+  </select>
+  <select id="getUserList_count" resultType="java.lang.Integer"  parameterType="java.util.Map">
+  	select count(1) from sys_user
+      <where>
+      	<if test="username!=null">
+      		userName=#{username}
+      	</if>
+      	<if test="telephone!=null">
+      		and telephone=#{telephone}
+      	</if>
+      	<if test="sex!=null">
+      		and sex=#{sex}
+      	</if>
+      </where>
+  </select>
+  <select id="getUserByUserName" parameterType="String" resultMap="BaseResultMap">
+  		select * from sys_user where userName=#{userName}
+  </select>
+</mapper>
