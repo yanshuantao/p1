@@ -1,26 +1,9 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="/WEB-INF/tag/page.tld" prefix="page" %>
+<%@include file="../icd_meta.jsp"%>
 <html>
 	<head>
-		<link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/js/artDialog4.1.7/skins/blue.css"/>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/artDialog4.1.7/artDialog.js"></script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/artDialog4.1.7/plugins/iframeTools.source.js"></script>
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/artDialog4.1.7/artDialog.source.js"></script> 
-		<script type="text/javascript" src="${pageContext.request.contextPath}/js/artDialog4.1.7/plugins/iframeTools.js"></script>
-		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/bootstrap.min.css" />
-		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/layout.css"/>
-		<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/csc.css"/>
-		<jsp:include page="../icd_meta.jsp"/>
 <script type="text/javascript">
 
-	//群发短信
-	function sendMessage(){
-		document.forms[0].action = "${urls}/business/Messages/mobileMessageAdd.jspa";
-		document.forms[0].submit();
-	}
 	//群发邮件
 	function sendEmail(){
 		document.forms[0].action = "${urls}/business/Messages/emailAdd.jspa";
@@ -28,13 +11,13 @@
 	}
 
 	//编辑
-	function updateAction(id,type){
+	function updateAction(id){
 		art.dialog.open(
-		  		'${urls}/business/Messages/messageUpdate.jspa?id='+id+'&type='+type,
+		  		'${applicationScope.basePath}/users/update.action?id='+id,
 				  {
 			  		width:800,
 			  	   	height:600,
-			  	   	title:'消息编辑'
+			  	   	title:'用户编辑'
 				  },false);
 	}
 	//详情

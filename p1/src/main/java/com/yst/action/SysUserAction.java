@@ -26,15 +26,12 @@ public class SysUserAction {
 
 	@Autowired
 	private SysUserService sysUserService;
-
+	@ResponseBody
 	@RequestMapping("login.action")
-	// 请求url地址映射，类似Struts的action-mapping
-	public String login(@RequestParam(value = "name") String username,
+	public int login(@RequestParam(value = "name") String username,
 			@RequestParam(value = "psd") String password,
 			HttpServletRequest request) {
-		// @RequestParam是指请求url地址映射中必须含有的参数(除非属性required=false)
-		// @RequestParam可简写为：@RequestParam("username")
-
+		int result=-1;
 		HttpSession session = request.getSession();
 		String pwdEncode = "";
 		try {
@@ -47,39 +44,47 @@ public class SysUserAction {
 		SysUser userInfo = sysUserService.getUserByUserNameAndPwd(username,
 				pwdEncode);
 		if (userInfo != null) {
-			List<SysModule> moduleList = sysUserService.getMenuList(username);
-			
-			List<SysModule> endModuleList = new ArrayList<SysModule>();
-			for (SysModule module : moduleList) {
-				Integer level = module.getLevel();
-				if (level == 1) {
-					endModuleList.add(module);
-				}
+			result=0;
+			session.setAttribute("userInfo", userInfo);
+		} else {
+			result=-2;
+		}
+		return result;
+	}
+	/**
+	 * 用户名密码验证通过后跳转首页
+	 * @param username
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("toHomePage.action")
+	public String toHomePage(@RequestParam(value = "name") String username,HttpServletRequest request){
+		List<SysModule> moduleList = sysUserService.getMenuList(username);
+		List<SysModule> endModuleList = new ArrayList<SysModule>();
+		for (SysModule module : moduleList) {
+			Integer level = module.getLevel();
+			if (level == 1) {
+				endModuleList.add(module);
 			}
-			for (SysModule parentModule : endModuleList) {
-				List<SysModule> sonList=new ArrayList<SysModule>();
-				for (SysModule module : moduleList) {
-					Integer parentId = module.getParentId();
-					Integer level = module.getLevel();
-					if (level == 2) {
-						if (parentModule.getId() == parentId) {
-							sonList.add(module);
-						}
+		}
+		for (SysModule parentModule : endModuleList) {
+			List<SysModule> sonList=new ArrayList<SysModule>();
+			for (SysModule module : moduleList) {
+				Integer parentId = module.getParentId();
+				Integer level = module.getLevel();
+				if (level == 2) {
+					if (parentModule.getId() == parentId) {
+						sonList.add(module);
 					}
 				}
-				parentModule.setSonList(sonList);
 			}
-			request.setAttribute("endModuleList", endModuleList);
-			SysUserModel userSession = new SysUserModel();
-			userSession.setUserInfo(userInfo);
-			userSession.setModuleList(moduleList);
-			session.setAttribute(session.getId(), userSession);
-			request.setAttribute("moduleList", moduleList);
-			request.setAttribute("aaa", 111);
-			return "homePage"; // 跳转页面路径（默认为转发），该路径不需要包含spring-servlet配置文件中配置的前缀和后缀
-		} else {
-			return "login";
+			parentModule.setSonList(sonList);
 		}
+		HttpSession session = request.getSession();
+		session.setAttribute("moduleList", moduleList);
+		request.setAttribute("endModuleList", endModuleList);
+		request.setAttribute("moduleList", moduleList);
+		return "homePage";
 	}
 //	@RequestMapping("getUserList.action")
 //	public String getUserList(HttpServletRequest request,HttpServletResponse response){

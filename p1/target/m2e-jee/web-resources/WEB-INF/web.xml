@@ -17,6 +17,15 @@
         org.springframework.web.context.ContextLoaderListener
      </listener-class>
   </listener>
+  <!-- 登录过滤器 -->
+  <filter>
+  	<filter-name>loginValidateFilter</filter-name>
+  	<filter-class>com.yst.filter.LoginValidateFilter</filter-class>
+  </filter>
+  <filter-mapping>
+  	<filter-name>loginValidateFilter</filter-name>
+  	<url-pattern>/*</url-pattern>
+  </filter-mapping>
   <!-- Spring MVC配置 -->
 <!-- ====================================== -->
 <servlet>

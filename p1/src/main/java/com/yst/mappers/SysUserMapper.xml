@@ -108,13 +108,13 @@
   <select id="getUserList" resultType = "com.yst.dto.SysUser" parameterType="java.util.Map">
       select * from sys_user
       <where>
-      	<if test="username!=null">
+      	<if test="username!=null and username!=''">
       		userName=#{username}
       	</if>
-      	<if test="telephone!=null">
+      	<if test="telephone!=null and telephone!=''">
       		and telephone=#{telephone}
       	</if>
-      	<if test="sex!=null">
+      	<if test="sex!=null and sex!=''">
       		and sex=#{sex}
       	</if>
       </where>
@@ -125,13 +125,13 @@
   <select id="getUserList_count" resultType="java.lang.Integer"  parameterType="java.util.Map">
   	select count(1) from sys_user
       <where>
-      	<if test="username!=null">
+      	<if test="username!=null and username!=''">
       		userName=#{username}
       	</if>
-      	<if test="telephone!=null">
+      	<if test="telephone!=null and telephone!=''">
       		and telephone=#{telephone}
       	</if>
-      	<if test="sex!=null">
+      	<if test="sex!=null and sex!=''">
       		and sex=#{sex}
       	</if>
       </where>

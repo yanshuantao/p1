@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import com.yst.util.Pagination;
 public class SysUserServiceImpl implements SysUserService{
 	@Autowired
 	SysUserMapper userMapper;
+	static final Logger logger = LogManager.getLogger(SysUserServiceImpl.class.getName());
 	
 	/**
 	 * 验证用户名密码
@@ -77,5 +80,9 @@ public class SysUserServiceImpl implements SysUserService{
 	public int addUser(SysUser user) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	@Override
+	public SysUser getUserById(int id) {
+		return userMapper.selectByPrimaryKey(id);
 	}
 }

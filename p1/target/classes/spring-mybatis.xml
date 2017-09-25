@@ -79,5 +79,6 @@
          <property name="mapperLocations"
                 value="classpath:com/yst/mappers/*Mapper.xml" />
          <property name="typeAliasesPackage" value="com.yst.dto" />
+         <property name="configLocation" value="classpath:mybatis-config.xml"></property>
   </bean>
 </beans>

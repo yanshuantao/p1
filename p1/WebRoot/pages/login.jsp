@@ -1,33 +1,52 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+	String path = request.getContextPath();
+	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
-<link rel="stylesheet" type="text/css" href="<%=basePath%>/js/login-reg/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="<%=basePath%>/js/login-reg/css/style.css" />
-
-<script src="<%=basePath%>/js/login-reg/js/jquery-1.7.2.min.js" type="text/javascript"></script>
+<%application.setAttribute("basePath", basePath); %>
+<%@include file="icd_meta.jsp"%>
+<link rel="stylesheet" type="text/css" href="${applicationScope.basePath}/js/login-reg/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="${applicationScope.basePath}js/login-reg/css/style.css" />
 <head>
      <title>登陆界面</title>
 <script type="text/javascript">
 $(function() {
+	/* 登录事件 */
 	$('#login').click(function() {
-		var name_state = $('#name');
-		var psd_state = $('#psd');
+		/* ajax提交 */
 		var name = $('#name').val();
 		var psd = $('#psd').val();
-		if (name == '') {
-			name_state.parent().next().next().css("display", "block");
-			return false;
-		} else if (psd == '') {
-			name_state.parent().next().next().css("display", "none");
-			psd_state.parent().next().next().css("display", "block");
-			return false;
-		} else {
-			name_state.parent().next().next().css("display", "none");
-			psd_state.parent().next().next().css("display", "none");
-			$('.login').submit();
+		if(name==''){
+			$("#erroNameText").text("用户名不能为空");
+			return;
 		}
+		if(psd==''){
+			$("#erroPsdText").text("密码不能为空");
+			return;
+		}
+		$.ajax({
+				type : "post",
+				url:"<%=basePath%>user/login.action",
+				data:{"name":name,"psd":psd},
+				dataType : "json",
+				success : function(data) {
+					if(data==0){
+						//正确处理
+						document.loginForm.action="<%=basePath%>user/toHomePage.action";
+						document.loginForm.submit();
+					}else if(data==-1){
+						//账号密码错误
+						art.dialog.alert("系统错误！");
+					}else if(data==-2){
+						//用户名密码错误
+						$("#erroText").text("用户名密码错误");
+					}
+				},
+				error : function() {
+					art.dialog.alert("操作失败，请稍后重试！");
+				}
+			  });
+		
 	});
 	$('#register').click(function() {
 		var name_r_state = $('#name_r');
@@ -114,7 +133,7 @@ function barter_btn(bb) {
 
 <div class="login_div">
 	<div class="col-xs-12 login_title">登录</div>
-	<form action="user/login.action" class="login" method="post">
+	<form id="loginForm" name="loginForm" action="user/login.action" class="login" method="post">
 		<div class="nav">
 			<div class="nav login_nav">
 				<div class="col-xs-4 login_username">
@@ -122,12 +141,7 @@ function barter_btn(bb) {
 				</div>
 				<div class="col-xs-6 login_usernameInput">
 					<input type="text" name="name" id="name" value="" placeholder="&nbsp;&nbsp;用户名/手机号"  onblur="javascript:ok_or_errorBylogin(this)" />
-				</div>
-				<div class="col-xs-1 ok_gou">
-					√
-				</div>
-				<div class="col-xs-1 error_cuo">
-					×
+					<span id="erroNameText" style="color:red;font-size:16px;"></span>
 				</div>
 			</div>
 			<div class="nav login_psdNav">
@@ -137,16 +151,12 @@ function barter_btn(bb) {
 				<div class="col-xs-6">
 					<input type="password" name="psd" id="psd" value="" placeholder="&nbsp;&nbsp;密码" onBlur="javascript:ok_or_errorBylogin(this)" />
 				</div>
-				<div class="col-xs-1 ok_gou">
-					√
-				</div>
-				<div class="col-xs-1 error_cuo">
-					×
-				</div>
+				<span id="erroPsdText" style="color:red;font-size:16px;"></span>
 			</div>
 			<div class="col-xs-12 login_btn_div">
-				<input type="submit" class="sub_btn" value="登录" id="login" />
+				<input type="button" class="sub_btn" value="登录" id="login" />
 			</div>
+			<div id="erroText" class="login_btn_div" style="color:red;font-size:16px;"></div>
 		</div>
 	</form>
 

@@ -17,5 +17,7 @@ public interface SysUserService {
 	Pagination getUserList(Pagination pagination);
 	
 	void deleteUser(List<Integer> userIdStr);
+	
+	SysUser getUserById(int id);
 
 }
