@@ -34,6 +34,7 @@ public class SysUserAction {
 		int result=-1;
 		HttpSession session = request.getSession();
 		String pwdEncode = "";
+		
 		try {
 			pwdEncode = Md5Encode.EncoderByMd5(password);
 		} catch (NoSuchAlgorithmException e) {
